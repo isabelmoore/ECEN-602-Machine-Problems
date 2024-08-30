@@ -1,1 +1,1 @@
-# ECEN-602-Machine-Problems
+# ECEN-602-Machine-Problem-1
