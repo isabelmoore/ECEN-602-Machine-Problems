@@ -9,7 +9,7 @@ To run the TCP server-client application on Ubuntu 22.04, this server will handl
 ### Clone the repository
 Use the following command to clone the repository: 
 `git clone git@github.com/ECEN-602-Machine-Problem-1.git`
- Ensure you have set up an SSH key for your GitHub account to use SSH. If not, use the command `ssh-keygen`
+ Ensure you have set up an SSH key for your GitHub account to use SSH. 
 
 ### Compiling the Code
 Within the repository folder, compile the code using the following commands:
