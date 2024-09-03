@@ -12,11 +12,7 @@ Use the following command to clone the repository:
  Ensure you have set up an SSH key for your GitHub account to use SSH. 
 
 ### Compiling the Code
-Within the repository folder, compile the code using the following commands:
-- In one terminal for the server: `gcc -o server server.c -Wall -Wextra`
-- In another terminal for the client: `gcc -o client client.c -Wall -Wextra`
-
-These commands compile the `server.c` and `client.c` files into executables named `server` and `client` respectively, enabling all warnings (`-Wall`) and extra warnings (`-Wextra`).
+Run `make all` to compile the source code.
 
 ## Running the Application
 1. **Start the server**:

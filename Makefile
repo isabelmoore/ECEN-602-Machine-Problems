@@ -14,4 +14,5 @@ all: client server
 
 .PHONY: clean
 clean:
-	rm -f *.o
+	rm -f *.o\
+	rm -f client server
