@@ -1,83 +1,87 @@
-#include <errno.h>
-#include <sys/socket.h>
 #include <stdio.h>
-#include <string.h>
-#include <arpa/inet.h>
-#include <sys/types.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <errno.h>
 
-
+// function to create socket and return file descriptor
 int create_socket() {
-    int sock_fd = socket(AF_INET, SOCK_STREAM, 0); // socket descriptor
-    if (sock_fd == -1) {
-        perror("creating socket failed");
-        exit(EXIT_FAILURE);
+    int sock_fd = socket(AF_INET, SOCK_STREAM, 0);  // create socket using TCP (sock_stream)
+    if (sock_fd == -1) {  // if socket creation fails
+        perror("Creating Socket Failed");  
+        exit(EXIT_FAILURE);  
     }
-    return sock_fd;
+    return sock_fd;  // return socket file descriptor
 }
 
+// function to connect to server using provided IP and port
 void connect_to_server(int socket_fd, const char *server_ip, int port) {
-    struct sockaddr_in serveraddr;
-    serveraddr.sin_family = AF_INET;  // address family to internet
-    serveraddr.sin_port = htons(port);  // port, converting from host to network byte order
-    serveraddr.sin_addr.s_addr = inet_addr(server_ip);  // ip address
+    struct sockaddr_in serveraddr;  // define server's address structure
 
+    serveraddr.sin_family = AF_INET;  // set address family to IPV4
+    serveraddr.sin_port = htons(port);  // convert port number to network byte order
+    serveraddr.sin_addr.s_addr = inet_addr(server_ip);  // convert IP address to binary form
+
+    // attempt to connect to server
     if (connect(socket_fd, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) == -1) {
-        perror("connecting to server failed");
-        exit(EXIT_FAILURE);
+        perror("Connecting to Server Failed");  // print error message if connection fails
+        exit(EXIT_FAILURE);  // exit program
     }
-    puts("connection established");
+    printf("Connection Established\n");  // print success message when connection is established
 }
 
-// messages to/from the server
-void send_and_receive_messages(int socket_fd) {
-    char send_buffer[100];   
-    char receive_buffer[100];  
+void send_receive_messages(int socket_fd) {
+    char send_buffer[100];  // buffer to hold messages to send
+    char receive_buffer[100];  // buffer to hold messages received from server
 
+    // loop to send and receive messages
     while (1) {
-        printf("enter message: ");
-        if (fgets(send_buffer, sizeof(send_buffer), stdin) == NULL || feof(stdin)) {
-            puts("eof encountered, exiting");
+        printf("Enter Message: ");  // prompt user for input
+        if (fgets(send_buffer, sizeof(send_buffer), stdin) == NULL || feof(stdin)) {  // if EOF encountered, break loop
+            puts("EOF Encountered - Exiting");  
             break;
         }
 
-        if (send(socket_fd, send_buffer, strlen(send_buffer), 0) == -1) {
-            perror("sending message failed");
-            continue;
+        // send message to server
+        if (send(socket_fd, send_buffer, strlen(send_buffer), 0) == -1) { // if sending fails
+            perror("Sending Message Failed");  
+            continue;  // continue to next loop iteration
         }
 
+        // receive server's response
         int bytes_received = recv(socket_fd, receive_buffer, sizeof(receive_buffer) - 1, 0);
-        if (bytes_received > 0) {
-            receive_buffer[bytes_received] = '\0';  // null
-            printf("received: %s", receive_buffer);
-        } else if (bytes_received == 0) {
-            puts("server closed the connection");
+        if (bytes_received > 0) {  // if data is received
+            receive_buffer[bytes_received] = '\0';  // nullterminate received string
+            printf("Received: %s", receive_buffer); 
+        } else if (bytes_received == 0) {  // if server closes connection
+            puts("Server Closed Connection");  
             break;
         } else {
-            perror("receiving message failed");
+            perror("Receiving Message Failed");  // error if receiving fails
         }
     }
 }
 
-// socket cleaned by closing connection
+// clean up and close socket
 void cleanup(int socket_fd) {
-    close(socket_fd);
-    puts("connection closed");
+    close(socket_fd);  
+    puts("Connection Closed"); 
 }
 
 int main(int argc, char* argv[]) {
+    // check if user has provided server IP and port
     if (argc < 3) {
-        fprintf(stderr, "usage: %s <server_ip> <port>\n", argv[0]);
-        exit(EXIT_FAILURE);
+        fprintf(stderr, "Usage: %s <server_ip> <port>\n", argv[0]);  
+        exit(EXIT_FAILURE);  // exit program if args missing
     }
 
-    int server_port = atoi(argv[2]);  // parse port number from command line
-    int socket_fd = create_socket();  // create socket
+    int server_port = atoi(argv[2]); // convert port to integer
+    int socket_fd = create_socket();
+    connect_to_server(socket_fd, argv[1], server_port); 
+    send_receive_messages(socket_fd);
+    cleanup(socket_fd);
 
-    connect_to_server(socket_fd, argv[1], server_port);  // establish connection to server
-    send_and_receive_messages(socket_fd);  
-    cleanup(socket_fd);  
-
-    return 0;
+    return 0;  // success execution
 }

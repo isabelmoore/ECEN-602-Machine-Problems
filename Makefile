@@ -1,7 +1,30 @@
-client.o: client.c
-	gcc -c client.c
+all: server client install add_path
+
+server: server.o
+	gcc server.o -o server -Wall -g -pthread
 
 client: client.o
-	gcc client.o -o client
+	gcc client.o -o client -Wall -g -pthread
 
-all: client
+server.o: server.c
+	gcc -Wall -g -pthread -c server.c
+
+client.o: client.c
+	gcc -Wall -g -pthread -c client.c
+
+.PHONY: add_path
+add_path:
+	@echo "Adding current directory to PATH"
+	@export PATH=$$PATH:.
+
+.PHONY: install
+install:
+	echo '#!/bin/sh' > echos
+	echo './server $$@' >> echos
+	echo '#!/bin/sh' > echo
+	echo './client $$@' >> echo
+	chmod +x echos echo
+
+.PHONY: clean
+clean:
+	rm -f *.o server client echos echo *~ core
