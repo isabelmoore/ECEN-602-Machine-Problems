@@ -64,7 +64,7 @@ ssize_t readline(int fd, char *vptr, size_t maxlen) {
 }
 
 // function to echo back received data to client
-void echo(int sockfd) {
+void response(int sockfd) {
     char buf[MAXLINE];  // buffer to hold received data
     int n;
 
@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
         // fork new process to handle client connection
         if ((childpid = fork()) == 0) {  // child process
             close(listenfd);  // child closes listening socket
-            echo(connfd);  // handle client request - echo data back
+            response(connfd);  // handle client request - echo data back
             exit(0);  // child process exits after handling request
         }
         close(connfd);  // parent closes connected socket - child handles connection
