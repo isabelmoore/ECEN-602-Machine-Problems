@@ -23,8 +23,9 @@ Run `make all` to compile source code and scripts `echos` and `echo` to simplify
 2. **Connect with client**:
 In client terminal, start your client(s) by connecting to server:  `./client 127.0.0.1 12345`
 
-client will prompt you to type a message, which will be echoed back by server.
+The client terminal will prompt you to type a message, which will be echoed back by server.
 
+To streamline your commands, you can use aliases `echos` and `echo` as substitutes for `./server` and `./client` respectively. However, if you've encountered issues with `.bashrc` not effectively adding the current directory to your PATH, you may need to manually execute `export PATH=$PATH:$(pwd)` in your terminal before running `echos 12345` for the server and `echo 127.0.0.1 12345` for the client. Also, when operating on Linux, using the echo command will simply repeat the provided IP address and port number you specify.
 
 ## Code Architecture
 ### Server
