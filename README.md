@@ -3,7 +3,7 @@
 ## Team Members and Roles ##
 - **Isabel Moore**: Set up the GitHub repository and wrote the core server (`server.c`) and client (`client.c`) programs. Also implemented the `echos` and `echo` aliases in the `Makefile` for easier execution of the server and client.
  - **Yiyang Yan**: Created the project report and conducted all the test cases.
-- **Shubham Kumar**: (to be added)
+- **Shubham Kumar**: Analyzed the code wrt Chatgpt version, re ran all the testcases.
 
 ## Overview
 To run TCP server-client application on Ubuntu 22.04, this server will handle incoming connections and echo back any messages received from client.
