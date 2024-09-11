@@ -22,6 +22,12 @@ Run `make all` to compile source code and scripts `echos` and `echo` to simplify
  In server terminal, run following command: `./server 12345` with `12345` as an example port number.
 2. **Connect with client**:
 In client terminal, start your client(s) by connecting to server:  `./client 127.0.0.1 12345`
+## Running Chatgpt version
+1. First go inside chatgpt directly and do make clean.
+2. do make
+3. ./echo_server 12346 in one terminal to create server.
+4. Repeat steps 1,2 in other terminal, then do ./echo_client 127.0.0.1.12346.
+5. Both terminals will be connected so proceed with typing any msgs.
 
 The client terminal will prompt you to type a message, which will be echoed back by server.
 
