@@ -23,7 +23,7 @@ int writen(int fd, const char *vptr, size_t n) {
                 printf("Server: Write Interrupted - Retrying\n");
                 nwritten = 0;  // retry write
             } else {
-                perror("Server: Write Error"); 
+                perror("Server: Error while sending."); 
                 return -1;  
             }
         }
@@ -51,7 +51,7 @@ ssize_t readline(int fd, char *vptr, size_t maxlen) {
             return n - 1;  // return bytes read before EOF
         } else {
             if (errno == EINTR) {  // interrupted by signal
-                printf("Server: Read interrupted - Continuing\n");
+                printf("Server: Read Interrupted - Continuing\n");
                 continue;  // retry read
             }
             perror("Server: Read Error");  
@@ -78,24 +78,24 @@ void response(int sockfd) {
 
     // check for errors in final read operation
     if (n < 0) {
-        perror("Server: Read Final Error");
+        perror("Server: Failed to Read - Retrying.");
     }
 }
 
-// signal handler for SIGCHLD to prevent zombie processes
+// signal handler for SIGCHLD for zombie processes
 void sigchld_handler(int signo) {
     while (waitpid(-1, NULL, WNOHANG) > 0);
 }
 
 int main(int argc, char **argv) {
 
-    // signal handler for SIGCHLD to prevent zombie processes
+    // signal handler for SIGCHLD for zombie processes
     struct sigaction sa;
     sa.sa_handler = sigchld_handler;
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
     if (sigaction(SIGCHLD, &sa, NULL) == -1) {
-        perror("Server: sigaction");
+        perror("Server: SIGACTION");
         exit(EXIT_FAILURE);
     }
 
@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
 
     // start listening for incoming connections - backlog of 10 connection
     if (listen(listenfd, 10) < 0) {
-        perror("Server: Listen Error");
+        perror("Server: Listening Error");
         exit(EXIT_FAILURE);
     }
 
@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
         clilen = sizeof(cliaddr);  // size of client address structure
         connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &clilen);  // accept client connection
         if (connfd < 0) {
-            perror("Server: Accept Error");
+            perror("Server: Accept Failed.");
             continue;  // continue to next iteration
         }
 

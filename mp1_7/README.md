@@ -1,7 +1,7 @@
 # ECEN-602-Machine-Problem-1: TCP Echo Server and Client
 
 ## Team Members and Roles ##
-- **Isabel Moore**: Set up the GitHub repository and wrote the core server (`server.c`) and client (`client.c`) programs. Also implemented the `echos` and `echo` aliases in the `Makefile` for easier execution of the server and client.
+- **Isabel Moore**: Set up the GitHub repository and wrote the core server (`server.c`) and client (`client.c`) programs for both original work and the optimized chatGBT. Also implemented the `echos` and `echo` aliases in the `Makefile` for easier execution of the server and client.
  - **Yiyang Yan**: Created the project report and conducted all the test cases.
 - **Shubham Kumar**: Analyzed the code wrt Chatgpt version, re ran all the testcases.
 
