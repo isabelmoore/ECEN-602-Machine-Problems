@@ -1,32 +1,31 @@
-# Makefile for TCP echo server and client
-
-# Compiler and flags
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c11
+CFLAGS = -Wall -g
 
-# Target executable names
-SERVER = echo_server
-CLIENT = echo_client
+SERVER = server
+CLIENT = client
 
-# Source files
 SERVER_SRC = echo_server.c
 CLIENT_SRC = echo_client.c
 
-# Default target
+.PHONY: all clean echos echo
+
+# Build server and client
 all: $(SERVER) $(CLIENT)
 
-# Build server executable
 $(SERVER): $(SERVER_SRC)
 	$(CC) $(CFLAGS) -o $(SERVER) $(SERVER_SRC)
 
-# Build client executable
 $(CLIENT): $(CLIENT_SRC)
 	$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT_SRC)
 
-# Clean up build artifacts
+# Clean built files
 clean:
 	rm -f $(SERVER) $(CLIENT)
 
-# Phony targets
-.PHONY: all clean
+# Run server with command-line arguments
+echos:
+	./$(SERVER) $(PORT)
 
+# Run client with command-line arguments
+echo:
+	./$(CLIENT) $(SERVER_ADDR) $(PORT)

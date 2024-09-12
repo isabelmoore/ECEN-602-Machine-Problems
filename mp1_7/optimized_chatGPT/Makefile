@@ -1,11 +1,13 @@
 CC = gcc
 CFLAGS = -Wall -g
 
-SERVER = echos
-CLIENT = echo
+SERVER = server
+CLIENT = client
 
 SERVER_SRC = server.c
 CLIENT_SRC = client.c
+
+.PHONY: all clean echos echo
 
 # Build server and client
 all: $(SERVER) $(CLIENT)
@@ -20,11 +22,10 @@ $(CLIENT): $(CLIENT_SRC)
 clean:
 	rm -f $(SERVER) $(CLIENT)
 
-# Run server
-run_server:
-	./$(SERVER) $(TARGET)
+# Run server with command-line arguments
+echos:
+	./$(SERVER) $(PORT)
 
-# Run client
-run_client:
-	./$(CLIENT) 127.0.0.1 $(TARGET)
-
+# Run client with command-line arguments
+echo:
+	./$(CLIENT) $(SERVER_ADDR) $(PORT)
