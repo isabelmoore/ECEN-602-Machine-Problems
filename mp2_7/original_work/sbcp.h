@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-/* SBCP Header Types */
-#define SBCP_HDR_JOIN   2
-#define SBCP_HDR_FWD    3
-#define SBCP_HDR_SEND   4
+/* SBCP Message Types */
+#define SBCP_MSG_JOIN   2
+#define SBCP_MSG_FWD    3
+#define SBCP_MSG_SEND   4
 
 /* SBCP Attribute Types */
 #define SBCP_ATTR_REASON        1
@@ -14,12 +14,12 @@
 #define SBCP_ATTR_CLIENT_COUNT  3
 #define SBCP_ATTR_MESSAGE       4
 
-/* SBCP Header */
+/* SBCP Message */
 typedef struct {
     uint16_t  version_type;
     uint16_t  length;
     sbcp_attr *payload;
-} sbcp_hdr;
+} sbcp_msg;
 
 /* SBCP Attribute */
 typedef struct {
@@ -29,25 +29,43 @@ typedef struct {
 } sbcp_attr;
 
 /**
- * @brief Returns SBCP header version.
+ * @brief Returns SBCP message version.
  * 
- * @param hdr The pointer to the SBCP header
+ * @param msg The pointer to the SBCP message
  * 
- * @return SBCP header version
+ * @return SBCP message version
  */
-uint8_t sbcp_hdr_get_version(sbcp_hdr *hdr) {
-    return (hdr->version_type >> 7);
+uint16_t sbcp_msg_get_version(sbcp_msg *msg) {
+    return (msg->version_type >> 7);
 }
 
 /**
- * @brief Returns SBCP header type.
+ * @brief Returns SBCP message type.
  * 
- * @param hdr The pointer to the SBCP header
+ * @param msg The pointer to the SBCP message
  * 
- * @return SBCP header type
+ * @return SBCP message type
  */
-uint8_t sbcp_hdr_get_type(sbcp_hdr *hdr) {
-    return (hdr->version_type &= 0x007F);
+uint16_t sbcp_msg_get_type(sbcp_msg *msg) {
+    return (msg->version_type &= 0x007F);
+}
+
+/**
+ * @brief Sets SBCP message version.
+ * 
+ * @param msg The pointer to the SBCP message
+ */
+void sbcp_msg_set_version(sbcp_msg *msg, uint16_t version) {
+    msg->version_type |= version << 7;
+}
+
+/**
+ * @brief Sets SBCP message type.
+ * 
+ * @param msg The pointer to the SBCP message
+ */
+void sbcp_msg_set_type(sbcp_msg *msg, uint16_t type) {
+    msg->version_type |= type;
 }
 
 #endif /* SBCP_H */
