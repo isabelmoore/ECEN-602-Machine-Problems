@@ -15,18 +15,18 @@
 #define SBCP_ATTR_MESSAGE       4
 
 /* SBCP Header */
-struct sbcp_hdr {
-    uint16_t version_type;
-    uint16_t length;
-    uint8_t  *payload;
-};
+typedef struct {
+    uint16_t  version_type;
+    uint16_t  length;
+    sbcp_attr *payload;
+} sbcp_hdr;
 
 /* SBCP Attribute */
-struct sbcp_attr {
+typedef struct {
     uint16_t type;
     uint16_t length;
     uint8_t  *payload;
-};
+} sbcp_attr;
 
 /**
  * @brief Returns SBCP header version.
@@ -35,7 +35,7 @@ struct sbcp_attr {
  * 
  * @return SBCP header version
  */
-uint8_t sbcp_hdr_get_version(struct sbcp_hdr *hdr) {
+uint8_t sbcp_hdr_get_version(sbcp_hdr *hdr) {
     return (hdr->version_type >> 7);
 }
 
@@ -46,7 +46,7 @@ uint8_t sbcp_hdr_get_version(struct sbcp_hdr *hdr) {
  * 
  * @return SBCP header type
  */
-uint8_t sbcp_hdr_get_type(struct sbcp_hdr *hdr) {
+uint8_t sbcp_hdr_get_type(sbcp_hdr *hdr) {
     return (hdr->version_type &= 0x007F);
 }
 
