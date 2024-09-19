@@ -10,8 +10,8 @@ This project involves a TCP-based chat application that supports multiple client
 
 ## Getting Started
 ### Clone repository
-Use following command to clone repository: 
- Ensure you have set up an SSH key for your GitHub account to use SSH. 
+Use following command to clone repository: `git@github.com:isabelmoore/ECEN-602-Machine-Problems.git`
+Ensure you have set up an SSH key for your GitHub account to use SSH. 
 
 ### Compiling Code
 Run `make all` to compile source code and scripts `echos` and `echo` to simplify running server and client programs.
