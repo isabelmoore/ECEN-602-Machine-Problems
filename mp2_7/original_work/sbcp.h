@@ -14,19 +14,49 @@
 #define SBCP_ATTR_CLIENT_COUNT  3
 #define SBCP_ATTR_MESSAGE       4
 
+// Forward declaration
+typedef struct sbcp_attr sbcp_attr;
+
+/* SBCP Attribute */
+struct sbcp_attr {
+    uint16_t type;
+    uint16_t length;
+    uint8_t  *payload;
+};
+
 /* SBCP Message */
 typedef struct {
     uint16_t  version_type;
     uint16_t  length;
-    sbcp_attr *payload;
+    sbcp_attr *payload;  
 } sbcp_msg;
 
-/* SBCP Attribute */
+/* Header structure */
 typedef struct {
-    uint16_t type;
-    uint16_t length;
-    uint8_t  *payload;
-} sbcp_attr;
+    int version;
+    int type;
+} Header;
+
+/* MessageAttribute structure */
+typedef struct {
+    int type;
+    int length;
+    char payload[512];
+} MessageAttribute;
+
+/* Message structure */
+typedef struct {
+    Header header;
+    MessageAttribute attribute[10];
+} Message;
+
+/* InfoCli structure: client username, socket file descriptor, client count */
+typedef struct InfoCli {
+    char username[100];
+    int fd;
+    int NoofClients;
+} InfoCli;
+
 
 /**
  * @brief Returns SBCP message version.
@@ -56,7 +86,8 @@ uint16_t sbcp_msg_get_type(sbcp_msg *msg) {
  * @param msg The pointer to the SBCP message
  */
 void sbcp_msg_set_version(sbcp_msg *msg, uint16_t version) {
-    msg->version_type |= version << 7;
+    msg->version_type &= 0x007F;  // Clear version bits
+    msg->version_type |= (version << 7);  // Set new version
 }
 
 /**
@@ -65,7 +96,8 @@ void sbcp_msg_set_version(sbcp_msg *msg, uint16_t version) {
  * @param msg The pointer to the SBCP message
  */
 void sbcp_msg_set_type(sbcp_msg *msg, uint16_t type) {
-    msg->version_type |= type;
+    msg->version_type &= 0xFF80;  // Clear type bits
+    msg->version_type |= (type & 0x007F);  // Set new type ensuring it's within bounds
 }
 
-#endif /* SBCP_H */
+#endif // SBCP_H
