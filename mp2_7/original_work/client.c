@@ -164,29 +164,40 @@ int main(int argc, char const *argv[]) {
     fd_set inputSet; // user input
     fd_set readSet; // read set for select func
 
+    struct addrinfo hints, *res;
+
     FD_ZERO(&readSet); // clear 
     FD_ZERO(&masterSet); // clear 
-    clientSocketFD = socket(AF_INET,SOCK_STREAM,0);
+    // clientSocketFD = socket(AF_INET,SOCK_STREAM,0);
 
-    if (clientSocketFD == -1) {
-        perror("Client: socket creation failed.\n");
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    getaddrinfo(argv[2], argv[3], &hints, &res);
+    
+    clientSocketFD = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    if (clientSocketFD < 0) {
+        perror("socket error");
         exit(0);
-    }
-
-    else {
+    } else {
         printf("Client socket created successful\n");
     }
 
     // server address
-    bzero(&serverAddress,sizeof(serverAddress));
-    serverAddress.sin_family = AF_INET;
-    hostret = gethostbyname(argv[2]);
-    memcpy(&serverAddress.sin_addr.s_addr, hostret->h_addr,hostret->h_length);
-    serverAddress.sin_port = htons(atoi(argv[3]));
+    // bzero(&serverAddress,sizeof(serverAddress));
+    // serverAddress.sin_family = AF_INET;
+    // hostret = gethostbyname(argv[2]);
+    // memcpy(&serverAddress.sin_addr.s_addr, hostret->h_addr,hostret->h_length);
+    // serverAddress.sin_port = htons(atoi(argv[3]));
 
     // connect to server
-    if (connect(clientSocketFD,(struct sockaddr *)&serverAddress,sizeof(serverAddress)) != 0) {
-        printf("Client: error connecting to server\n");
+    // if (connect(clientSocketFD,(struct sockaddr *)&serverAddress,sizeof(serverAddress)) != 0) {
+    //     printf("Client: error connecting to server\n");
+    //     exit(0);
+    // }
+    if (connect(clientSocketFD, res->ai_addr, res->ai_addrlen) != 0) {
+        perror("connect error");
         exit(0);
     }
 

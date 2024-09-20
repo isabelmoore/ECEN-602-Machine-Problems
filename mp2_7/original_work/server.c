@@ -198,44 +198,60 @@ int main(int argc, char const *argv[]) {
     int serverSocketFD, clientSocketFD, removeIndex, currClientIndex;
     unsigned int clientAddrLen ;
     int clientStatus = 0;
-    struct sockaddr_in serverAddr, *clientAddresses;
-    struct hostent* serverHost;
+    // struct sockaddr_in serverAddr, *clientAddresses;
+    // struct hostent* serverHost;
 
     fd_set master; 
     fd_set readyFDs; 
     int maxFD, tempUsername, fdIndex = 0, clientFD = 0, shiftIndex = 0, clientIndex, bytesReceived, maxClients = 0;
 
+    struct addrinfo hints, *res;
+
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
+    hints.ai_socktype = SOCK_STREAM;
+
+    getaddrinfo(argv[1], argv[2], &hints, &res);
+
+    serverSocketFD = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+
     // creating server socket
-    serverSocketFD = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverSocketFD == -1) {
-        perror("Server: socket creation failed");
-        exit(1);
-    } else {
-        printf("Server socket created successfully.\n");
-    }
+    // serverSocketFD = socket(AF_INET, SOCK_STREAM, 0);
+    // if (serverSocketFD == -1) {
+    //     perror("Server: socket creation failed");
+    //     exit(1);
+    // } else {
+    //     printf("Server socket created successfully.\n");
+    // }
 
     // set socket options
-    bzero(&serverAddr, sizeof(serverAddr));
+    // bzero(&serverAddr, sizeof(serverAddr));
     int enable = 1;
     
     // setsockopt() allocates buffer space, control timeouts, or permit socket data broadcasts
     if (setsockopt(serverSocketFD, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
-        perror("Server: socktet option failed"); 
+        perror("setsocket error"); 
         exit(1);
     }
 
     // setting server address
-    serverAddr.sin_family = AF_INET;
-    serverHost = gethostbyname(argv[1]);
-    memcpy(&serverAddr.sin_addr.s_addr, serverHost->h_addr, serverHost->h_length);
-    serverAddr.sin_port = htons(atoi(argv[2]));
+    // serverAddr.sin_family = AF_INET;
+    // serverHost = gethostbyname(argv[1]);
+    // memcpy(&serverAddr.sin_addr.s_addr, serverHost->h_addr, serverHost->h_length);
+    // serverAddr.sin_port = htons(atoi(argv[2]));
     maxClients = atoi(argv[3]);
 
     // allocating memory for clients and setting up bind
     clients = (struct infoClient *)malloc(maxClients * sizeof(struct infoClient));
-    clientAddresses = (struct sockaddr_in *)malloc(maxClients * sizeof(struct sockaddr_in));
-    if (bind(serverSocketFD, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) != 0) {
-        perror("Server: socket bind error");
+    // clientAddresses = (struct sockaddr_in *)malloc(maxClients * sizeof(struct sockaddr_in));
+    // if (bind(serverSocketFD, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) != 0) {
+    //     perror("Server: socket bind error");
+    //     exit(1);
+    // } else {
+    //     printf("Socket successfully bounded.\n");
+    // }
+    if (bind(serverSocketFD, res->ai_addr, res->ai_addrlen) != 0) {
+        perror("bind error");
         exit(1);
     } else {
         printf("Socket successfully bounded.\n");
@@ -268,8 +284,12 @@ int main(int argc, char const *argv[]) {
                 if (fdIndex == serverSocketFD) {
 
                     // handle new connections
-                    clientAddrLen  = sizeof(clientAddresses[clientCount]);
-                    clientSocketFD = accept(serverSocketFD, (struct sockaddr *)&clientAddresses[clientCount], &clientAddrLen);
+                    // clientAddrLen  = sizeof(clientAddresses[clientCount]);
+                    // clientSocketFD = accept(serverSocketFD, (struct sockaddr *)&clientAddresses[clientCount], &clientAddrLen);
+                    struct sockaddr_storage clientAddresses;
+                    socklen_t clientAddrLen = sizeof(clientAddresses);
+
+                    clientSocketFD = accept(serverSocketFD, (struct sockaddr *)&clientAddresses, &clientAddrLen);
                     if (clientSocketFD < 0) {
                         perror("Server: aacept failed");
                         exit(1);
