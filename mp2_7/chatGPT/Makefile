@@ -1,15 +1,15 @@
-CC = gcc
-CFLAGS = -Wall -g
+# Makefile for Simple Broadcast Chat Protocol
 
+CC = gcc
+CFLAGS = -pthread
 SERVER = server
 CLIENT = client
 
-SERVER_SRC = echo_server.c
-CLIENT_SRC = echo_client.c
+# Source files
+SERVER_SRC = server.c
+CLIENT_SRC = client.c
 
-.PHONY: all clean echos echo
-
-# Build server and client
+# Targets
 all: $(SERVER) $(CLIENT)
 
 $(SERVER): $(SERVER_SRC)
@@ -18,14 +18,14 @@ $(SERVER): $(SERVER_SRC)
 $(CLIENT): $(CLIENT_SRC)
 	$(CC) $(CFLAGS) -o $(CLIENT) $(CLIENT_SRC)
 
-# Clean built files
 clean:
 	rm -f $(SERVER) $(CLIENT)
 
-# Run server with command-line arguments
-echos:
-	./$(SERVER) $(PORT)
+run-server: $(SERVER)
+	./$(SERVER)
 
-# Run client with command-line arguments
-echo:
-	./$(CLIENT) $(SERVER_ADDR) $(PORT)
+run-client: $(CLIENT)
+	./$(CLIENT)
+
+.PHONY: all clean run-server run-client
+
