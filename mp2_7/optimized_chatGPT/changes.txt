@@ -1,0 +1,40 @@
+//////////Server Changes
+Optimizations Made
+Memory Management: Use dynamic memory allocation judiciously and ensure proper cleanup to avoid memory leaks.
+
+Code Readability: Improve code readability with consistent formatting and comments.
+
+Error Handling: Enhance error handling to provide clearer messages.
+
+Reduce Redundant Code: Minimize repeated code blocks by creating helper functions.
+
+Use strncpy for Safety: Replace strcpy with strncpy to avoid buffer overflows.
+
+Optimize Loop Conditions: Simplify loop structures where possible.
+
+Modularize the Code: Break down large functions into smaller, manageable ones.
+
+Key Changes:
+Improved Safety: Used strncpy to prevent buffer overflows.
+Dynamic Memory Cleanup: Ensured proper memory cleanup with free(clients).
+Simplified Message Handling: Consolidated repetitive tasks into functions and used clear, consistent variable naming.
+Error Handling: Provided clearer error messages and handling.
+
+//////Client changes
+Key Optimizations
+Safety with strncpy: Use strncpy instead of strcpy to prevent buffer overflows.
+
+Error Handling: Improved error handling for socket operations.
+
+Redundant Code Removal: Simplified code by reducing redundancy.
+
+Consistent Indentation: Improved readability through consistent formatting.
+
+Structured Logic: Enhanced logical flow and modularity.
+
+Changes Explained:
+Use of strncpy: Prevents buffer overflows by ensuring the strings are safely copied.
+Removed Unused Variables: Cleaned up variables that were not needed, improving readability.
+Switch Statement: Simplified message handling with a switch statement for clarity.
+Null Termination: Ensured all string payloads are null-terminated to prevent undefined behavior.
+Error Messages: Added more informative error messages for clarity.
