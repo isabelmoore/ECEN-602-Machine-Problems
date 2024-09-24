@@ -16,7 +16,7 @@ struct infoClient *clients; // Array to store information about each client
 void NAK(int clientSocketFD, int code);
 void ACK(int clientSocketFD);
 void ONLINE(fd_set master, int serverSocketFD, int clientSocketFD, int maxFD);
-void OFFLINE(fd_set master, int fdIndex, int serverSocketFD, int clientSocketFD, int maxFD);
+void OFFLINE(fd_set master, int fdIndex, int serverSocketFD, int clientSocketFD, int maxFD, int clientCount);
 int checkUsername(const char username[]);
 int isClientValid(int clientSocketFD, int maxClients);
 
@@ -35,7 +35,7 @@ int checkUsername(const char username[]) {
 void ACK(int clientSocketFD) {
     Message message_ACK;
     Header header_ACK = {3, 7}; // Version 3, Type 7
-    MessageAttribute attribute_ACK = {4, {0}}; // Type 4
+    MessageAttribute attribute_ACK = {4, 0, {0}}; // Type 4
 
     // Construct the usernames list
     char tempUsername[180] = {0};
@@ -63,7 +63,7 @@ void ACK(int clientSocketFD) {
 void NAK(int clientSocketFD, int code) {
     Message message_NAK;
     Header header_NAK = {3, 5}; // Version 3, Type 5
-    MessageAttribute attribute_NAK = {1, {0}}; // Type 1
+    MessageAttribute attribute_NAK = {1, 0, {0}}; // Type 1
 
     // Set error message based on rejection code
     const char *errorMessage = (code == 1) ? "Username is incorrect" : "Client count exceeded request";
@@ -81,7 +81,7 @@ void NAK(int clientSocketFD, int code) {
 void ONLINE(fd_set master, int serverSocketFD, int clientSocketFD, int maxFD) {
     Message forwardMessage;
     forwardMessage.header = (Header){3, 8}; // Version 3, Type 8
-    forwardMessage.attribute[0] = (MessageAttribute){2, {0}}; // Type 2
+    forwardMessage.attribute[0] = (MessageAttribute){2,0, {0}}; // Type 2
 
     // Set username of the newly connected client in message payload
     strncpy(forwardMessage.attribute[0].payload, clients[clientCount - 1].username, sizeof(forwardMessage.attribute[0].payload) - 1);
@@ -96,7 +96,7 @@ void ONLINE(fd_set master, int serverSocketFD, int clientSocketFD, int maxFD) {
 }
 
 // Broadcast to all clients when a client goes offline
-void OFFLINE(fd_set master, int fdIndex, int serverSocketFD, int maxFD) {
+void OFFLINE(fd_set master, int fdIndex, int serverSocketFD, int clientSocketFD, int maxFD, int clientCount) {
     Message message_OFFLINE;
     const char *username = NULL;
 
@@ -111,7 +111,7 @@ void OFFLINE(fd_set master, int fdIndex, int serverSocketFD, int maxFD) {
     if (username) {
         printf("Socket %d belonging to User '%s' has disconnected\n", fdIndex, username);
         message_OFFLINE.header = (Header){3, 6}; // Version 3, Type 6
-        message_OFFLINE.attribute[0] = (MessageAttribute){2, {0}};
+        message_OFFLINE.attribute[0] = (MessageAttribute){2, 0, {0}};
         strncpy(message_OFFLINE.attribute[0].payload, username, sizeof(message_OFFLINE.attribute[0].payload) - 1);
 
         // Broadcast offline message to all clients except the disconnected one and the server
@@ -260,7 +260,7 @@ int main(int argc, char const *argv[]) {
 
                     if (bytesReceived <= 0) {
                         if (bytesReceived == 0) {
-                            OFFLINE(master, fdIndex, serverSocketFD, clientSocketFD, maxFD); // Announce client offline
+                            OFFLINE(master, fdIndex, serverSocketFD, clientSocketFD, maxFD, clientCount); // Announce client offline
                         } else {
                             perror("Receive failed");
                         }
