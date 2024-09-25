@@ -2,7 +2,7 @@
 
 ## Team Members and Roles ##
 - **Isabel Moore**: (to be added)
- - **Yiyang Yan**: (to be added)
+ - **Yiyang Yan**: Refactored connection establishment code, added IPv6 support
 - **Shubham Kumar**: (to be added)
 
 ## Overview
