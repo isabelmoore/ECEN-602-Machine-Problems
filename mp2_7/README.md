@@ -3,7 +3,7 @@
 ## Team Members and Roles ##
 - **Isabel Moore**: (to be added)
  - **Yiyang Yan**: Refactored connection establishment code, added IPv6 support
-- **Shubham Kumar**: (to be added)
+- **Shubham Kumar**: (Took original code and chatgpt version to provide the optimized code, generated testcases and verified them to generate the report.)
 
 ## Overview
 This project involves a TCP-based chat application that supports multiple clients communicating through a central server. The application uses the Simple Broadcast Chat Protocol (SBCP) to manage chat sessions, handle client messages, and track client states like active, idle, and disconnected.
