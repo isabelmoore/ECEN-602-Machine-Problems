@@ -3,7 +3,7 @@
 ## Team Members and Roles ##
 - **Isabel Moore**: Developed the core server (server.c) and client (client.c) programs, and extended the sbcp.h header file by defining the structures and functions essential for handling SBCP messages, as part of the original code.
 
- - **Yiyang Yan**: Refactored connection establishment code, added IPv6 support.
+ - **Yiyang Yan**: Developed sbcp.h header file, refactored connection establishment code, added IPv6 support.
 - **Shubham Kumar**: Took original code and chatgpt version to provide the optimized code, generated testcases and verified them to generate the report.
 
 ## Overview
