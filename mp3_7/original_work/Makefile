@@ -4,12 +4,11 @@ CC = gcc
 CFLAGS = -Wall
 TARGET = server
 SRCS = server.c
-OBJS = $(SRCS:.c=.o)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
+$(TARGET): $(SRCS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRCS)
 
 clean:
 	rm -f $(TARGET) $(OBJS)
