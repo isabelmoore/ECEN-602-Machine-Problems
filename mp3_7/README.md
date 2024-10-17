@@ -1,7 +1,7 @@
 # ECEN-602-Machine-Problem-3: TFTP Server
 
 ## Team Members and Roles ##
-- **Isabel Moore**: 
+- **Isabel Moore**: Created the Makefile and optimized the code using ChatGPT suggestions.
 - **Yiyang Yan**: Implemented and tested TFTP server
 - **Shubham Kumar**: 
 
@@ -16,6 +16,8 @@ Run `make all` to compile source code.
 ## Running Application
 1. **Start server**:
 In server terminal, run following command: `./server 127.0.0.1 12345` with `12345` being the port number.
+
+
 
 ## Code Architecture
 ### Server
