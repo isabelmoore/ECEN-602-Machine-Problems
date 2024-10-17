@@ -82,7 +82,7 @@ void send_file(int server_sockfd, struct sockaddr *client_sockaddr, socklen_t cl
         send_buf[1] = OP_ERR;
         send_buf[2] = (1 >> 8) & 0xFF;
         send_buf[3] = 1 & 0xFF;
-        strcpy(send_buf + 4, "file not found");
+        strcpy((char *)(send_buf + 4), "file not found");
         if (sendto(server_sockfd, send_buf, 4 + strlen("file not found") + 1, 0, client_sockaddr, client_socklen) < 0) {
             perror("send error");
             fclose(stream);
@@ -131,8 +131,8 @@ void send_file(int server_sockfd, struct sockaddr *client_sockaddr, socklen_t cl
 
         switch(recv_buf[1]) {
             case 1:
-                strcpy(file_name, recv_buf + 2);
-                strcpy(mode, recv_buf + 2 + strlen(file_name) + 1);
+                strcpy(file_name, (char *)(recv_buf + 2));
+                strcpy(mode, (char *)(recv_buf + 2 + strlen(file_name) + 1));
                 printf("RRQ: Filename: %s, Mode: %s\n", file_name, mode);
                 break;
             case 4:
