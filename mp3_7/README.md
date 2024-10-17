@@ -3,7 +3,7 @@
 ## Team Members and Roles ##
 - **Isabel Moore**: Created the Makefile and optimized the code using ChatGPT suggestions.
 - **Yiyang Yan**: Implemented and tested TFTP server
-- **Shubham Kumar**: 
+- **Shubham Kumar**:Implemented basic server code and verified testcases 
 
 ## Getting Started
 ### Clone repository
@@ -16,7 +16,10 @@ Run `make all` to compile source code.
 ## Running Application
 1. **Start server**:
 In server terminal, run following command: `./server 127.0.0.1 12345` with `12345` being the port number.
-
+2. Start Client in the directory where file needs to be transferred and run following commmands:
+   - tftp
+   - connect 127.0.0.1 12345
+   - get file.txt
 
 
 ## Code Architecture
