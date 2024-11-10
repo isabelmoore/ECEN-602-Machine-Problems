@@ -1,9 +1,9 @@
 # ECEN-602-Machine-Problem-4: Proxy Server
 
 ## Team Members and Roles ##
-- **Isabel Moore**: Created the Makefile and optimized the code using ChatGPT suggestions.
-- **Yiyang Yan**: Implemented and tested proxy server
-- **Shubham Kumar**: Implemented basic server code and verified test cases 
+- **Isabel Moore**: (to be added)
+- **Yiyang Yan**: (to be added)
+- **Shubham Kumar**: (to be added)
 
 ## Overview:
 This project implements a **Proxy Server** using TCP. The server handles client requests, caches responses, and blocks certain URLs based on predefined lists. It supports handling of multiple clients using `pthread` for concurrency.
