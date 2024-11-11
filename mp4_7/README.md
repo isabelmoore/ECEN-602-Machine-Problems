@@ -1,8 +1,7 @@
 # ECEN-602-Machine-Problem-4: Proxy Server
 
-## Team Members and Roles ##
-- **Isabel Moore**: (to be added)
-- **Yiyang Yan**: (Implemented cache-related help functions, tested the original code and wrote the report)
+- **Isabel Moore**: Developed the source code for `proxy.c`, `client.c`, and `proxy.h`, and optimized the implementation for test case 1. Added the ChatGPT-optimized version as well.
+- **Yiyang Yan**: Implemented cache-related helper functions, tested the original code, and wrote the report.
 - **Shubham Kumar**: (to be added)
 
 ## Overview:
@@ -14,7 +13,8 @@ Use the following command to clone the repository: `git@github.com:isabelmoore/E
 Ensure you have set up an SSH key for your GitHub account to use SSH. 
 
 ### Compiling Code
-Run `make all` to compile the source code.
+Run `make clean` to remove any previously compiled binaries.
+Then, run `make all` to compile the source code.
 
 ## Running Application
 1. **Start server**:
