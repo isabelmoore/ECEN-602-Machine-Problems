@@ -22,6 +22,7 @@ pthread_mutex_t block_mutex = PTHREAD_MUTEX_INITIALIZER;
 CachedSite *cachedSites = NULL;
 BlockedSite *blockedSites = NULL;
 CachedSite *cache_head = NULL;
+int cached_num = 0;
 int serverRunning = 1;
 int server_socket;
 
@@ -288,8 +289,8 @@ void send_cached_page(int client_socket, const char *filePath) {
         return;
     }
 
-    const char *response = "HTTP/1.0 200 OK\r\n\r\n";
-    send(client_socket, response, strlen(response), 0);
+    // const char *response = "HTTP/1.0 200 OK\r\n\r\n";
+    // send(client_socket, response, strlen(response), 0);
 
     char buffer[BUFFER_SIZE];
     ssize_t bytesRead;
@@ -416,15 +417,17 @@ void add_blocked_site(const char *url) {
 }
 
 // adds a new entry to the cache
-void add_cache_entry(const char *url, const char *data) {
-    CachedSite *new_site = (CachedSite*) malloc(sizeof(CachedSite));
-    snprintf(new_site->filename, BUFFER_SIZE, "cached_%ld.html", time(NULL));
+void add_cache_entry(const char *url, const char *cache_filename) {
+    CachedSite *new_site = (CachedSite*) calloc(1, sizeof(CachedSite));
+    // snprintf(new_site->filename, BUFFER_SIZE, "cached_%ld.html", time(NULL));
+    strcpy(new_site->filename, cache_filename);
     strcpy(new_site->url, url);
     new_site->last_accessed = time(NULL);
     new_site->next = cache_head;
     cache_head = new_site;
+    cached_num++;
 
-    if (MAX_CACHE_SIZE > 0) {
+    if (cached_num > MAX_CACHE_SIZE) {
         remove_oldest_cache_entry();
     }
 }

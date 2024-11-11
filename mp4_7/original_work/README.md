@@ -2,7 +2,7 @@
 
 ## Team Members and Roles ##
 - **Isabel Moore**: (to be added)
-- **Yiyang Yan**: (to be added)
+- **Yiyang Yan**: (Implemented cache-related help functions, tested the original code and wrote the report)
 - **Shubham Kumar**: (to be added)
 
 ## Overview:
