@@ -163,61 +163,74 @@ void handle_http_request(int client_socket, const char *url) {
 
 // fetches content from server
 void fetch_from_server(int client_socket, const char *url, const char *hostname, const char *path) {
-    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (server_socket < 0) {
-        perror("Failed to create socket");
-        return;
+    char last_modified[BUFFER_SIZE] = "";
+    // Extract Last-Modified or Date from cached site if available
+    CachedSite *cached_site = check_cache(url);
+    if (cached_site) {
+        // Assume we have a function to extract the Last-Modified or Date header from the cached file
+        extract_last_modified(cached_site->filename, last_modified);
     }
 
-    struct sockaddr_in server_addr;
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(80);
-
-    struct hostent *host = gethostbyname(hostname);
-    if (!host) {
-        perror("Failed to resolve hostname");
-        close(server_socket);
-        return;
-    }
-
-    memcpy(&server_addr.sin_addr, host->h_addr, host->h_length);
-
-    if (connect(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Failed to connect to web server");
-        close(server_socket);
-        return;
-    }
-
-    char request[BUFFER_SIZE];
-    snprintf(request, sizeof(request), "GET %s HTTP/1.0\r\nHost: %s\r\nConnection: close\r\n\r\n", path, hostname);
-    if (send(server_socket, request, strlen(request), 0) < 0) {
-        perror("Failed to send request to web server");
-        close(server_socket);
-        return;
-    }
-
-    char response[BUFFER_SIZE];
-    ssize_t bytes_received;
-    FILE *cache_file = NULL;
-    char cache_filename[BUFFER_SIZE];
-
-    snprintf(cache_filename, sizeof(cache_filename), "%s/%ld.html", CACHE_DIR, time(NULL));
-    cache_file = fopen(cache_filename, "w");
-
-    while ((bytes_received = recv(server_socket, response, BUFFER_SIZE - 1, 0)) > 0) {
-        response[bytes_received] = '\0';
-        send(client_socket, response, bytes_received, 0);
-        if (cache_file) {
-            fwrite(response, 1, bytes_received, cache_file);
+    if (strlen(last_modified) > 0) {
+        conditional_get(client_socket, url, hostname, path, last_modified);
+    } else {
+        int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+        if (server_socket < 0) {
+            perror("Failed to create socket");
+            return;
         }
-    }
 
-    if (cache_file) {
-        fclose(cache_file);
-        add_cache_entry(url, cache_filename);
-    }
+        struct sockaddr_in server_addr;
+        server_addr.sin_family = AF_INET;
+        server_addr.sin_port = htons(80);
 
-    close(server_socket);
+        struct hostent *host = gethostbyname(hostname);
+        if (!host) {
+            perror("Failed to resolve hostname");
+            close(server_socket);
+            return;
+        }
+
+        memcpy(&server_addr.sin_addr, host->h_addr, host->h_length);
+
+        if (connect(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+            perror("Failed to connect to web server");
+            close(server_socket);
+            return;
+        }
+
+        char request[BUFFER_SIZE];
+        snprintf(request, sizeof(request), "GET %s HTTP/1.0\r\nHost: %s\r\nConnection: close\r\n\r\n", path, hostname);
+        printf("Sending request to origin server: %s\n", request); // Log the request
+        if (send(server_socket, request, strlen(request), 0) < 0) {
+            perror("Failed to send request to web server");
+            close(server_socket);
+            return;
+        }
+
+        char response[BUFFER_SIZE];
+        ssize_t bytes_received;
+        FILE *cache_file = NULL;
+        char cache_filename[BUFFER_SIZE];
+
+        snprintf(cache_filename, sizeof(cache_filename), "%s/%ld.html", CACHE_DIR, time(NULL));
+        cache_file = fopen(cache_filename, "w");
+
+        while ((bytes_received = recv(server_socket, response, BUFFER_SIZE - 1, 0)) > 0) {
+            response[bytes_received] = '\0';
+            send(client_socket, response, bytes_received, 0);
+            if (cache_file) {
+                fwrite(response, 1, bytes_received, cache_file);
+            }
+        }
+
+        if (cache_file) {
+            fclose(cache_file);
+            add_cache_entry(url, cache_filename);
+        }
+
+        close(server_socket);
+    }
 }
 
 // parses url into hostname and path
@@ -230,7 +243,7 @@ void parse_url(const char *url, char *hostname, char *path) {
 
 // console listener for server commands
 void *console_listener(void *arg) {
-    char command[100];
+    char command[100]; // Declare the command variable
     while (1) {
         if (fgets(command, sizeof(command), stdin) != NULL) {
             command[strcspn(command, "\n")] = 0;
@@ -440,6 +453,7 @@ void save_cache() {
     while (curr) {
         fprintf(file, "%s %s\n", curr->url, curr->filename);
         curr = curr->next;
+
     }
     fclose(file);
 }
@@ -450,4 +464,81 @@ void close_server(int server_socket) {
     save_blocked_sites();
     close(server_socket);
     printf("Server closed.\n");
+}
+
+void conditional_get(int client_socket, const char *url, const char *hostname, const char *path, const char *last_modified) {
+    int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_socket < 0) {
+        perror("Failed to create socket");
+        return;
+    }
+
+    struct sockaddr_in server_addr;
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(80);
+
+    struct hostent *host = gethostbyname(hostname);
+    if (!host) {
+        perror("Failed to resolve hostname");
+        close(server_socket);
+        return;
+    }
+
+    memcpy(&server_addr.sin_addr, host->h_addr, host->h_length);
+
+    if (connect(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        perror("Failed to connect to web server");
+        close(server_socket);
+        return;
+    }
+
+    char request[BUFFER_SIZE];
+    snprintf(request, sizeof(request), "GET %s HTTP/1.0\r\nHost: %s\r\nIf-Modified-Since: %s\r\nConnection: close\r\n\r\n", path, hostname, last_modified);
+    printf("Sending Conditional GET request to origin server: %s\n", request); // Log the request
+    if (send(server_socket, request, strlen(request), 0) < 0) {
+        perror("Failed to send request to web server");
+        close(server_socket);
+        return;
+    }
+
+    char response[BUFFER_SIZE];
+    ssize_t bytes_received;
+    FILE *cache_file = NULL;
+    char cache_filename[BUFFER_SIZE];
+
+    snprintf(cache_filename, sizeof(cache_filename), "%s/%ld.html", CACHE_DIR, time(NULL));
+    cache_file = fopen(cache_filename, "w");
+
+    while ((bytes_received = recv(server_socket, response, BUFFER_SIZE - 1, 0)) > 0) {
+        response[bytes_received] = '\0';
+        send(client_socket, response, bytes_received, 0);
+        if (cache_file) {
+            fwrite(response, 1, bytes_received, cache_file);
+        }
+    }
+
+    if (cache_file) {
+        fclose(cache_file);
+        add_cache_entry(url, cache_filename);
+    }
+
+    close(server_socket);
+}
+
+void extract_last_modified(const char *filename, char *last_modified) {
+    FILE *file = fopen(filename, "r");
+    if (!file) {
+        perror("Failed to open cached file");
+        return;
+    }
+
+    char line[BUFFER_SIZE];
+    while (fgets(line, sizeof(line), file)) {
+        if (strncmp(line, "Last-Modified:", 14) == 0) {
+            strcpy(last_modified, line + 15); // Skip "Last-Modified: " and copy the rest
+            break;
+        }
+    }
+
+    fclose(file);
 }

@@ -14,3 +14,7 @@ $(CLIENT): client.c
 
 clean:
 	rm -f $(PROXY) $(CLIENT)
+	rm -rf cached/*
+
+# clean_cache:
+# 	rm -rf cached/*

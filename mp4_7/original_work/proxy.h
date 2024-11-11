@@ -54,4 +54,8 @@ void send_blocked_message(int clientSocket);
 void send_cached_page(int clientSocket, const char *filePath);
 void send_non_cached_page(int clientSocket, const char *url);
 
+// new function declarations
+void extract_last_modified(const char *filename, char *last_modified);
+void conditional_get(int client_socket, const char *url, const char *hostname, const char *path, const char *last_modified);
+
 #endif // PROXY_H
