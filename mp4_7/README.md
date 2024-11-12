@@ -1,6 +1,6 @@
 # ECEN-602-Machine-Problem-4: Proxy Server
 
-- **Isabel Moore**: Developed the source code for `proxy.c`, `client.c`, and `proxy.h`, and optimized the implementation for test case 1. Added the ChatGPT-optimized version as well.
+- **Isabel Moore**: Developed the source code for proxy.c, client.c, and proxy.h, optimizing the implementation specifically for Test Case 1. Integrated a ChatGPT-enhanced version and conducted testing for Test Cases 4-6.
 - **Yiyang Yan**: Implemented cache-related helper functions, tested the original code, and wrote the report.
 - **Shubham Kumar**: (to be added)
 
