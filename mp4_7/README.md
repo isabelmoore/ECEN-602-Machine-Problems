@@ -2,7 +2,7 @@
 
 - **Isabel Moore**: Developed the source code for proxy.c, client.c, and proxy.h, optimizing the implementation specifically for Test Case 1. Integrated a ChatGPT-enhanced version and conducted testing for Test Cases 4-6.
 - **Yiyang Yan**: Implemented cache-related helper functions, tested the original code, and wrote the report.
-- **Shubham Kumar**: (to be added)
+- **Shubham Kumar**: Re-ran all the testcases before final closure.
 
 ## Overview:
 This project implements a **Proxy Server** using TCP. The server handles client requests, caches responses, and blocks certain URLs based on predefined lists. It supports handling of multiple clients using `pthread` for concurrency.
